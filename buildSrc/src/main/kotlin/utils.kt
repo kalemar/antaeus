@@ -20,6 +20,9 @@ fun Project.kotlinProject() {
         // Mockk
         "testImplementation"("io.mockk:mockk:1.9")
 
+        // AssertJ
+        "testImplementation"("org.assertj:assertj-core:3.11.1")
+
         // JUnit 5
         "testImplementation"("org.junit.jupiter:junit-jupiter-api:$junitVersion")
         "testImplementation"("org.junit.jupiter:junit-jupiter-params:$junitVersion")
