@@ -24,6 +24,7 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import setupInitialData
 import java.sql.Connection
+import java.time.ZonedDateTime
 
 fun main() {
     // The tables to create in the database.
@@ -76,5 +77,8 @@ fun main() {
         everyFirstDayOfMonth()
     )
 
-    runBlocking { billPendingUsecase.execute().join() }
+    runBlocking {
+        val start = ZonedDateTime.now().plusMinutes(1)
+        billPendingUsecase.execute(start).join()
+    }
 }
