@@ -8,13 +8,14 @@
 package io.pleo.antaeus.app
 
 import getPaymentProvider
-import io.pleo.antaeus.core.services.BillingService
-import io.pleo.antaeus.core.services.CustomerService
-import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.core.services.*
+import io.pleo.antaeus.core.services.Schedules.everyFirstDayOfMonth
+import io.pleo.antaeus.core.usecases.BillAllPendingInvoicesOnSchedule
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.data.CustomerTable
 import io.pleo.antaeus.data.InvoiceTable
 import io.pleo.antaeus.rest.AntaeusRest
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -56,12 +57,24 @@ fun main() {
     val customerService = CustomerService(dal = dal)
 
     // This is _your_ billing service to be included where you see fit
-    val billingService = BillingService(paymentProvider = paymentProvider)
+    val billingService = BillingService(paymentProvider = paymentProvider, dal = dal)
+
+    val executionService = ExecutionService()
+    val notificationService = NotificationService()
 
     // Create REST web service
     AntaeusRest(
         invoiceService = invoiceService,
         customerService = customerService
     ).run()
-}
 
+    val billPendingUsecase = BillAllPendingInvoicesOnSchedule(
+        executionService,
+        notificationService,
+        billingService,
+        dal,
+        everyFirstDayOfMonth()
+    )
+
+    runBlocking { billPendingUsecase.execute().join() }
+}
