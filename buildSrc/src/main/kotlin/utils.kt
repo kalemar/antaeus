@@ -1,4 +1,3 @@
-
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
@@ -16,6 +15,9 @@ fun Project.kotlinProject() {
         // Logging
         "implementation"("org.slf4j:slf4j-simple:1.7.25")
         "implementation"("io.github.microutils:kotlin-logging:1.6.22")
+
+        // Coroutines
+        "implementation"("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1")
 
         // Mockk
         "testImplementation"("io.mockk:mockk:1.9")
